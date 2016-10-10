@@ -28,14 +28,18 @@ Usage of ~\github.com\thimoonxy\xcopy\xcp.exe:
 ## Example
 
 * Example on windows:
-Display progress and limts bw to 10 MB/s:
+
+_Display progress and limts bw to 10 MB/s:_
+
 ![Progress](https://github.com/thimoonxy/xcopy/blob/master/1.gif)
 
-Display progress in human readable format, task stats shows IO is shaped to 10 MB/s as expected :
+_Display progress in human readable format, task stats shows IO is shaped to 10 MB/s as expected :_
+
 ![Progress](https://github.com/thimoonxy/xcopy/blob/master/2.gif)
 * Example on Linux:
 
 ![Progress](https://github.com/thimoonxy/xcopy/blob/master/3.gif)
+
 ## Environment
 
 * This CLI is designed to work on both `Linux` & `Windows` environments.
