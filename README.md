@@ -26,9 +26,9 @@ Usage of ~\github.com\thimoonxy\xcopy\xcp.exe:
 
 ## Example
 
-![Progress](https://github.com/thimoonxy/xcopy/tree/master/example .gif)
+![Progress](https://github.com/thimoonxy/xcopy/blob/master/1.gif)
 
-
+![Progress](https://github.com/thimoonxy/xcopy/blob/master/2.gif)
 ## Requirements
 
 This CLI is designed to work on both Linux & Windows environments.
