@@ -44,11 +44,6 @@ func main() {
 		fmt.Println("Error:\ndst not allowed same as src")
 		os.Exit(1)
 	}
-	//	*src = strings.TrimRight(*src, sep)
-	//	*dst = strings.TrimRight(*dst, sep)
-	// seems golang only recognize '/'
-	//	*src = strings.Replace(*src, "\\", "/", -1)
-	//	*dst = strings.Replace(*dst, "\\", "/", -1)
 
 	*bw = *bw << 20
 	fmt.Printf("src: %s\ndst: %s\nCopying ...\n\n", *src, *dst)
