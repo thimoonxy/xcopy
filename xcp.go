@@ -91,7 +91,7 @@ func main() {
 		cp(*src, *dst)
 	}
 	//	time.Sleep(200 * time.Second)
-	fmt.Printf("\n\nElapsed: %ds .", time.Now().Unix()-start)
+	fmt.Printf("\n\nElapsed: %ds .\n", time.Now().Unix()-start)
 }
 
 func walk(path string) {
@@ -175,17 +175,16 @@ func cp(src_fname, dst_fname string) {
 		Size:     src_stat.Size(),
 		DrawFunc: draw,
 	}
-
 	if *progress == true && lbw.Value.String() == lbw.DefValue {
 		progressR.Reader = s
 		_, err = io.Copy(d, progressR)
 	} else if *progress == true && lbw.Value.String() != lbw.DefValue {
 		progressR.Reader = bwsrc
 		//		fmt.Println(*bw)
-		bwio.Copy(bwdst, progressR, *bw)
+		_, err = bwio.Copy(bwdst, progressR, *bw)
 	} else if *progress == false && lbw.Value.String() != lbw.DefValue {
 		//		fmt.Println(*bw)
-		bwio.Copy(bwdst, bwsrc, *bw)
+		_, err = bwio.Copy(bwdst, bwsrc, *bw)
 
 	} else {
 		_, err = io.Copy(d, s)
@@ -193,9 +192,11 @@ func cp(src_fname, dst_fname string) {
 
 	if err != nil {
 		fmt.Fprintf(st, "# Failed copying %s to %s .\n", src_fname, dst_fname)
+		fmt.Println(err)
 	}
 }
 func sep_perOS() (sep string) {
+	sep = "/"
 	os, has := os.LookupEnv("OS")
 	if has {
 		os = strings.ToLower(os)
@@ -207,6 +208,7 @@ func sep_perOS() (sep string) {
 		}
 
 	}
+
 	return
 }
 
@@ -216,7 +218,13 @@ func dst_folder_parse(d string) (folder string, dst_is_folder bool) {
 	// replace twice since '/' might be used in gitbash on windows
 	d = strings.Replace(d, "\\", sep, len(d))
 	d = strings.Replace(d, "/", sep, len(d))
-	isfile := regexp.MustCompile(sep + "\\$")
+	var parse string
+	if sep == "\\" {
+		parse = sep + "\\$"
+	} else {
+		parse = sep + "$"
+	}
+	isfile := regexp.MustCompile(parse)
 	t := isfile.FindAllString(d, 1)
 
 	if len(t) == 1 {
@@ -228,6 +236,7 @@ func dst_folder_parse(d string) (folder string, dst_is_folder bool) {
 		folder = strings.Split(d, fname)[0]
 		dst_is_folder = false
 		//		fmt.Println("folder in parse func:", folder)
+		//		fmt.Println("sep:", sep, "t:", t, "d:", d, "parse:", parse)
 	}
 	return folder, dst_is_folder
 }

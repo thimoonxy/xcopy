@@ -35,4 +35,5 @@ Display progress in human readable format, task stats shows IO is shaped to 10 M
 
 ## Environment
 
-This CLI is designed to work on both Linux & Windows environments.
+* This CLI is designed to work on both `Linux` & `Windows` environments.
+* Golang1.7 or newer.
