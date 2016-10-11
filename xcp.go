@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strings"
@@ -101,15 +102,25 @@ func walk(path string) {
 		perm := info.Mode()
 		if info.IsDir() {
 			next_src_path := path + sep + info.Name()
+			next_src_info, _ := os.Stat(next_src_path)
+			perm = next_src_info.Mode()
 			next_dst_path := *dst + strings.Split(next_src_path, *src)[1]
 			//			fmt.Println("mkdir ", next_dst_path)
-			os.MkdirAll(next_dst_path, perm)
+			os.Mkdir(next_dst_path, perm)
+			if sep == "/" {
+				fixfattr(next_src_info, next_dst_path)
+			}
 			walk(next_src_path)
 		} else {
 			src_fname := path + sep + info.Name()
+			src_folder_info, _ := os.Stat(path)
+			perm = src_folder_info.Mode()
 			dst_fname := *dst + strings.Split(src_fname, *src)[1]
 			dst_folder := *dst + strings.Split(path, *src)[1]
-			os.MkdirAll(dst_folder, perm)
+			os.Mkdir(dst_folder, perm)
+			if sep == "/" {
+				fixfattr(src_folder_info, dst_folder)
+			}
 			//			fmt.Println("dst_folder ", dst_folder)
 			cp(src_fname, dst_fname)
 		}
@@ -141,7 +152,7 @@ func byteUnitStr(n int64) string {
 }
 
 func cp(src_fname, dst_fname string) {
-
+	sep := sep_perOS()
 	var (
 		draw  ioprogress.DrawFunc
 		bwsrc *bwio.Reader
@@ -150,7 +161,9 @@ func cp(src_fname, dst_fname string) {
 	lbw := flag.Lookup("l")
 
 	d, _ := os.Create(dst_fname)
+	defer d.Close()
 	s, _ := os.Open(src_fname)
+	defer s.Close()
 	src_stat, _ := s.Stat()
 	if lbw.Value.String() != lbw.DefValue {
 
@@ -193,6 +206,8 @@ func cp(src_fname, dst_fname string) {
 	if err != nil {
 		fmt.Fprintf(st, "# Failed copying %s to %s .\n", src_fname, dst_fname)
 		fmt.Println(err)
+	} else if sep == "/" {
+		fixfattr(src_stat, dst_fname)
 	}
 }
 func sep_perOS() (sep string) {
@@ -239,4 +254,16 @@ func dst_folder_parse(d string) (folder string, dst_is_folder bool) {
 		//		fmt.Println("sep:", sep, "t:", t, "d:", d, "parse:", parse)
 	}
 	return folder, dst_is_folder
+}
+
+func fixfattr(src_stat os.FileInfo, dst_fname string) {
+
+	s := src_stat.Sys()
+	r := reflect.ValueOf(s).Elem()
+
+	gid := (r.FieldByName("Gid").Uint())
+	uid := (r.FieldByName("Uid").Uint())
+	os.Chown(dst_fname, int(uid), int(gid))
+	os.Chmod(dst_fname, src_stat.Mode())
+
 }
