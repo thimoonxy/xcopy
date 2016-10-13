@@ -6,6 +6,12 @@ xcopy is a Go (golang) CLI with implementations of `ioprogress` and `bwio` that 
 * IO Bandwidth control
 * Display copying progress with human readable units.
 
+## How does bwio work
+
+[bwio](https://github.com/wjkohnen/bwio) is a smart method to sleep penalty time duration, here's how I'm understanding it:
+
+![Progress](https://github.com/thimoonxy/xcopy/blob/master/bwio.png)
+
 ## Usage
 
 Here is an example of outputting a basic usage of this CLI
@@ -44,3 +50,7 @@ _Display progress in human readable format, task stats shows IO is shaped to 10 
 
 * This CLI is designed to work on both `Linux` & `Windows` environments.
 * Golang1.7 or newer.
+
+## Requirement
+* [bwio](https://github.com/wjkohnen/bwio)
+* [ioprogress](https://github.com/mitchellh/ioprogress)
